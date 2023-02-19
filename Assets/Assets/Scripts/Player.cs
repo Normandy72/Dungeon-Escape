@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] private float _jumpForce = 5.0f;
+    [SerializeField] private float _speed = 3.0f;
     // [SerializeField] private LayerMask _groundLayer;
 
     private Rigidbody2D _rigid; 
@@ -30,7 +31,7 @@ public class Player : MonoBehaviour
     {
         // GetAxisRaw gives us only -1, 0 and 1
         float horizontalMove = Input.GetAxisRaw("Horizontal");
-        _rigid.velocity = new Vector2(horizontalMove, _rigid.velocity.y);
+        _rigid.velocity = new Vector2(horizontalMove * _speed, _rigid.velocity.y);
     }
 
     private void PlayerJump()
