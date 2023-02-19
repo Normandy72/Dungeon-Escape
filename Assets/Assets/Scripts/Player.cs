@@ -5,11 +5,10 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] private float _jumpForce = 5.0f;
-    [SerializeField] private bool _grounded = false;
-    [SerializeField] private LayerMask _groundLayer;
+    // [SerializeField] private LayerMask _groundLayer;
 
-    private Rigidbody2D _rigid;
-    private bool _resetJumpNeeded = false;    
+    private Rigidbody2D _rigid; 
+    private bool _resetJump = false; 
 
     void Start()
     {
@@ -20,14 +19,11 @@ public class Player : MonoBehaviour
     {
         PlayerMovement();
 
-        if(Input.GetKeyDown(KeyCode.Space) && _grounded == true)
+        if(Input.GetKeyDown(KeyCode.Space) && IsGrounded() == true)
         {
             PlayerJump();
-            _resetJumpNeeded = true;
-            StartCoroutine(ResetJumpNeededRoutine());
-        }
-
-        RaycastHit();      
+            StartCoroutine(ResetJumpRoutine());
+        }    
     }
 
     private void PlayerMovement()
@@ -40,32 +36,34 @@ public class Player : MonoBehaviour
     private void PlayerJump()
     {
         _rigid.velocity = new Vector2(_rigid.velocity.x, _jumpForce);
-        _grounded = false;
     }
 
-    private void RaycastHit()
+    bool IsGrounded()
     {
         // Vector2 origin, Vector2 direction, float distance, int layerMask
-        // The << operator shifts its left-hand operand left by the number of bits defined by its right-hand operand. 
-        // RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, Vector2.down, 1.0f, 1 << 8);
+        // We can use layer value or bit operator.
+        // RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, Vector2.down, 0.6f, _groundLayer.value);
+        // The << operator shifts its left-hand operand left by the number of bits defined by its right-hand operand.        
 
-        RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, Vector2.down, 0.6f, _groundLayer.value);
-        Debug.DrawRay(transform.position, Vector2.down * 0.6f, Color.green);
+        RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, Vector2.down, 0.6f, 1 << 8);
+        // Debug.DrawRay(transform.position, Vector2.down * 0.6f, Color.green);
 
         if(hitInfo.collider != null)
         {
-            //Debug.Log("Hit: " + hitInfo.collider.name);
-
-            if(_resetJumpNeeded == false)
+            if(_resetJump == false)
             {
-                _grounded = true;
-            }            
+                //Debug.Log("Hit: " + hitInfo.collider.name);
+                return true;   
+            }                     
         }
+
+        return false;
     }
 
-    IEnumerator ResetJumpNeededRoutine()
+    IEnumerator ResetJumpRoutine()
     {
+        _resetJump = true;
         yield return new WaitForSeconds(0.1f);
-        _resetJumpNeeded = false;
+        _resetJump = false;
     }
 }
