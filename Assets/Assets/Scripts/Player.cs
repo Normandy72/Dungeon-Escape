@@ -9,7 +9,8 @@ public class Player : MonoBehaviour
 
     private Rigidbody2D _rigid;
     private PlayerAnimation _playerAnimation;
-    private SpriteRenderer _spriteRenderer;
+    private SpriteRenderer _playerSpriteRenderer;
+    private SpriteRenderer _swordSpriteRenderer;
     private bool _resetJump = false;
     private bool _grounded = false;
    
@@ -18,7 +19,8 @@ public class Player : MonoBehaviour
     {
         _rigid = GetComponent<Rigidbody2D>();
         _playerAnimation = GetComponent<PlayerAnimation>();
-        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        _playerSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        _swordSpriteRenderer = transform.GetChild(1).GetComponent<SpriteRenderer>();
     }
 
     void Update()
@@ -30,7 +32,7 @@ public class Player : MonoBehaviour
             PlayerJump();
             StartCoroutine(ResetJumpRoutine());
         }
-        
+
         if(Input.GetMouseButtonDown(0) && IsGrounded() == true)
         {
             _playerAnimation.Attack();
@@ -99,11 +101,23 @@ public class Player : MonoBehaviour
     {
         if(faceRight)
         {
-            _spriteRenderer.flipX = false;
+            _playerSpriteRenderer.flipX = false;
+            _swordSpriteRenderer.flipX = false;
+            _swordSpriteRenderer.flipY = false;
+
+            Vector3 newPosition = _swordSpriteRenderer.transform.localPosition;
+            newPosition.x = 1.01f;
+            _swordSpriteRenderer.transform.localPosition = newPosition;
         }
         else if(!faceRight)
         {
-            _spriteRenderer.flipX = true;
+            _playerSpriteRenderer.flipX = true;
+            _swordSpriteRenderer.flipX = true;
+            _swordSpriteRenderer.flipY = true;
+
+            Vector3 newPosition = _swordSpriteRenderer.transform.localPosition;
+            newPosition.x = -1.01f;
+            _swordSpriteRenderer.transform.localPosition = newPosition;
         }
     }
 }
