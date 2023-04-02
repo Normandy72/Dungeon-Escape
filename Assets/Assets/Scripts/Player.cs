@@ -29,7 +29,12 @@ public class Player : MonoBehaviour
         {
             PlayerJump();
             StartCoroutine(ResetJumpRoutine());
-        }    
+        }
+        
+        if(Input.GetMouseButtonDown(0) && IsGrounded() == true)
+        {
+            _playerAnimation.Attack();
+        }  
     }
 
     private void PlayerMovement()
