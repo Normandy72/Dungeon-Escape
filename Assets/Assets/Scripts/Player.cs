@@ -10,11 +10,13 @@ public class Player : MonoBehaviour
     private Rigidbody2D _rigid; 
     private bool _resetJump = false;
     private PlayerAnimation _playerAnimation;
+    private SpriteRenderer _spriteRenderer;
 
     void Start()
     {
         _rigid = GetComponent<Rigidbody2D>();
         _playerAnimation = GetComponent<PlayerAnimation>();
+        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     void Update()
@@ -33,6 +35,15 @@ public class Player : MonoBehaviour
         // GetAxisRaw gives us only -1, 0 and 1
         float horizontalMove = Input.GetAxisRaw("Horizontal");
         _rigid.velocity = new Vector2(horizontalMove * _speed, _rigid.velocity.y);
+
+        if(horizontalMove > 0)
+        {
+            Flip(true);
+        }
+        else if(horizontalMove < 0)
+        {
+            Flip(false);
+        }
 
         _playerAnimation.Move(horizontalMove);
     }
@@ -69,5 +80,17 @@ public class Player : MonoBehaviour
         _resetJump = true;
         yield return new WaitForSeconds(0.1f);
         _resetJump = false;
+    }
+
+    void Flip(bool faceRight)
+    {
+        if(faceRight)
+        {
+            _spriteRenderer.flipX = false;
+        }
+        else if(!faceRight)
+        {
+            _spriteRenderer.flipX = true;
+        }
     }
 }
