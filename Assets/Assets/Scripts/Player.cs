@@ -7,10 +7,12 @@ public class Player : MonoBehaviour
     [SerializeField] private float _speed = 3.0f;
     // [SerializeField] private LayerMask _groundLayer;
 
-    private Rigidbody2D _rigid; 
-    private bool _resetJump = false;
+    private Rigidbody2D _rigid;
     private PlayerAnimation _playerAnimation;
     private SpriteRenderer _spriteRenderer;
+    private bool _resetJump = false;
+    private bool _grounded = false;
+   
 
     void Start()
     {
@@ -34,6 +36,8 @@ public class Player : MonoBehaviour
     {
         // GetAxisRaw gives us only -1, 0 and 1
         float horizontalMove = Input.GetAxisRaw("Horizontal");
+        _grounded = IsGrounded();
+
         _rigid.velocity = new Vector2(horizontalMove * _speed, _rigid.velocity.y);
 
         if(horizontalMove > 0)
@@ -51,6 +55,9 @@ public class Player : MonoBehaviour
     private void PlayerJump()
     {
         _rigid.velocity = new Vector2(_rigid.velocity.x, _jumpForce);
+
+        _playerAnimation.Jump(true);
+
     }
 
     bool IsGrounded()
@@ -60,7 +67,7 @@ public class Player : MonoBehaviour
         // RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, Vector2.down, 0.6f, _groundLayer.value);
         // The << operator shifts its left-hand operand left by the number of bits defined by its right-hand operand.        
 
-        RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, Vector2.down, 0.6f, 1 << 8);
+        RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, Vector2.down, 1f, 1 << 8);
         // Debug.DrawRay(transform.position, Vector2.down * 0.6f, Color.green);
 
         if(hitInfo.collider != null)
@@ -68,6 +75,7 @@ public class Player : MonoBehaviour
             if(_resetJump == false)
             {
                 //Debug.Log("Hit: " + hitInfo.collider.name);
+                _playerAnimation.Jump(false);
                 return true;   
             }                     
         }
