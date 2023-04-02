@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -9,11 +8,13 @@ public class Player : MonoBehaviour
     // [SerializeField] private LayerMask _groundLayer;
 
     private Rigidbody2D _rigid; 
-    private bool _resetJump = false; 
+    private bool _resetJump = false;
+    private PlayerAnimation _playerAnimation;
 
     void Start()
     {
         _rigid = GetComponent<Rigidbody2D>();
+        _playerAnimation = GetComponent<PlayerAnimation>();
     }
 
     void Update()
@@ -32,6 +33,8 @@ public class Player : MonoBehaviour
         // GetAxisRaw gives us only -1, 0 and 1
         float horizontalMove = Input.GetAxisRaw("Horizontal");
         _rigid.velocity = new Vector2(horizontalMove * _speed, _rigid.velocity.y);
+
+        _playerAnimation.Move(horizontalMove);
     }
 
     private void PlayerJump()
